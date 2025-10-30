@@ -1,21 +1,23 @@
 from pyglet import shapes
-import math
+from math import sin, cos
 
-def create_arrow(x, y, length, angle, color, batch):
-    """
-    Draws an arrow starting at (x, y), with given length and angle (in degrees).
-    """
-    angle_rad = math.radians(angle*-1 + 90)
-    end_x = x + length * math.cos(angle_rad)
-    end_y = y + length * math.sin(angle_rad)
-    line = shapes.Line(x, y, end_x, end_y, thickness=2, color=color, batch=batch)
-    arrow_size = 10
-    left_x = end_x - arrow_size * math.cos(angle_rad - math.pi/6)
-    left_y = end_y - arrow_size * math.sin(angle_rad - math.pi/6)
-    
-    right_x = end_x - arrow_size * math.cos(angle_rad + math.pi/6)
-    right_y = end_y - arrow_size * math.sin(angle_rad + math.pi/6)
-    
-    arrow_head = shapes.Triangle(end_x, end_y, left_x, left_y, right_x, right_y, color=color, batch=batch)
-    
-    return line, arrow_head
+class BoidShape():
+    def __init__(self, x, y, theta, batch):
+        self.length = 15
+        self._circle = shapes.Circle(x, y, radius=5, segments=20, color=(64,128,128), batch=batch)
+        x2 = x + self.length * cos(theta)
+        y2 = y + self.length * sin(theta)
+        self._line = shapes.Line(x, y, x2, y2, 3, color=(64,128,128), batch=batch)
+
+    def update_pos(self, dx, dy, new_theta):
+        self._circle.x += dx
+        self._circle.y += dy
+
+        x = self._circle.x
+        y = self._circle.y
+        
+        self._line.x = x
+        self._line.y = y
+        self._line.x2 = x + self.length * cos(new_theta)
+        self._line.y2 = y + self.length * sin(new_theta)
+
