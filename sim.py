@@ -4,78 +4,54 @@ Seperation - avoid neighbors
 Alignment - go with direction of group
 """
 
-from helpers import BoidShape
+from helpers import Boids, angle_diff
 import numpy as np
-import pyglet, random
+import pyglet
 from pyglet import window, shapes
-from math import atan2, cos, sin, degrees
-BOIDS = 1000
+from math import atan2, pi
+import random
+BOIDS = 40
 SIZE = 1000
 
-boid_type = np.dtype([('theta',np.float32),('x',np.float32),('y',np.float32)])
 
 win = window.Window()
-win.size = SIZE,SIZE
+win.set_size(SIZE, SIZE)
 pyglet.gl.glClearColor(1,1,1,1)
 win.set_caption("Boids") 
 
 batch = pyglet.graphics.Batch()
 
-boids_array = np.empty(0,dtype=boid_type)
-shape_array: list[BoidShape] = []
+boids_swarm = Boids(BOIDS,(SIZE,SIZE),batch)
 
-def calc_centroid():
-    return (np.mean(boids_array['x']),np.mean(boids_array['y']))
-
-def calc_avg_head():
-    return np.mean(boids_array['theta'])
-
-for n in range(BOIDS):
-    new_theta = random.random()*360
-    new_x = random.randint(0,SIZE)
-    new_y = random.randint(0,SIZE)
-    new_boid = np.array([(new_theta,new_x,new_y)],dtype=boid_type)
-    boids_array = np.concatenate([boids_array,new_boid])
-    
-    shape_array.append(BoidShape(new_x,new_y,new_theta,(64,128,128),batch))
-
-centroid = calc_centroid()
-centroid_boid = BoidShape(centroid[0],centroid[1],0,(255,0,0),batch)
+centroid_shape = shapes.Circle(SIZE//2,SIZE//2,10,10,(255,0,0),batch=batch)
 
 def update(hz):
 
-    centroid = calc_centroid()
-    avg_heading = calc_avg_head()
+    centroid = boids_swarm.calc_centroid()
+    avg_heading = boids_swarm.calc_avg_head()
 
-    centroid_boid.update_pos(centroid[0],centroid[1])
-    rand_strength = 0
-    cohesion_strength = 2
-    alginment_strength = 4
+    centroid_shape.x = centroid[0]
+    centroid_shape.y = centroid[1]
 
-    for i, boid in enumerate(boids_array):
+    cohesion_strength = 0.01
+    alignment_strength = 0.02
 
-        if rand_strength != 0: 
-            rand_dx, rand_dy = (random.gauss(0,1), random.gauss(0,1)) * rand_strength
-        else: # skip gaussian sampling
-            rand_dx, rand_dy = 0,0
+    d_thetas = np.zeros(BOIDS,dtype=np.float32)
+    for i, boid in enumerate(boids_swarm.boids_array):
 
         # cohesion
         angle_to_centroid = atan2((centroid[1] - boid['y']),(centroid[0] - boid['x']))
-        cohesion_dx = cos(angle_to_centroid) * cohesion_strength
-        cohesion_dy = sin(angle_to_centroid) * cohesion_strength
+        cohesion_dtheta = angle_diff(angle_to_centroid, boid['theta']) * cohesion_strength
 
         # alignment 
-        alignment_dx = cos(avg_heading) * alginment_strength
-        alignment_dy = sin(avg_heading) * alginment_strength
+        alignment_dtheta = angle_diff(avg_heading, boid['theta']) * alignment_strength
 
-        dx = rand_dx + cohesion_dx + alignment_dx
-        dy = rand_dy + cohesion_dy + alignment_dy
+        d_theta = cohesion_dtheta + alignment_dtheta
 
-        boid['x'] += dx
-        boid['y'] += dy
-        boid['theta'] = atan2(dy,dx)
+        d_theta = min(d_theta,pi/8)
+        d_thetas[i] = d_theta
 
-        shape_array[i].update_pos(dx,dy)
+    boids_swarm.update_state(d_thetas)
 
 @win.event
 def on_draw():
