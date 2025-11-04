@@ -25,7 +25,7 @@ class Boids():
 
     def __create_shapes(self, batch): 
         for boid_state in self.boids_array: 
-            self.shape_array.append(BoidShape(boid_state['x'],boid_state['y'],boid_state['theta'],(0,255,255),batch))
+            self.shape_array.append(BoidShape(boid_state['x'],boid_state['y'],boid_state['theta'],(128,128,128),batch))
 
     def __shape_update(self):
         for shape, boid_state in zip(self.shape_array, self.boids_array):
@@ -68,7 +68,7 @@ class BoidShape():
         '''
         strickly for animating the movement of the boids. all movement math and state update logic should happen in the Boids class 
         '''
-        self.length = 15
+        self.length = 10
         self._circle = shapes.Circle(x, y, radius=5, segments=20, color=color, batch=batch)
         x2 = x + self.length * cos(theta)
         y2 = y + self.length * sin(theta)
