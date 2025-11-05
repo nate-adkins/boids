@@ -44,7 +44,6 @@ async def update_swarm():
         alignment_dtheta = angle_diff(avg_heading, a['theta']) 
 
         d_theta = cohesion_dtheta * cohesion_strength + alignment_dtheta * alignment_strength
-        if abs(d_theta) < 0.05: d_theta = 0
         new_theta = a["theta"] + d_theta
         a["x"] = a["x"] + speed * cos(new_theta)
         a["y"] = a["y"] + speed * sin(new_theta)
