@@ -3,18 +3,18 @@ import websockets, json, http.server, webbrowser
 import math
 from helpers import *
 
-COUNT = 200
-S = 0.05
-C = 0.1
-A = 0.1
+COUNT = 100
+S = 0
+C = 0
+A = 0
+K = 5
 
 agents = generate_random_states(COUNT)
 async def update_swarm():
     speed = 0.005
-    k = 3
 
     for i, a in enumerate(agents):
-        neighbors = [agents[idx] for _, idx in k_nearest_neighbors(agents, i, k)]
+        neighbors = [agents[idx] for _, idx in k_nearest_neighbors(agents, i, K)]
         centroid = calc_centroid(neighbors)
         avg_heading = calc_avg_heading(neighbors)
         d_theta = cohesion(centroid, a) * C + alignment(avg_heading, a) * A  + seperation(neighbors, a) * S
@@ -24,15 +24,26 @@ async def update_swarm():
         a["y"] = (a["y"] + speed * math.sin(new_theta)) % 1
         a["theta"] = new_theta
 
-
 async def swarm_handler(ws):
-    global agents
+    global agents, C, A, S, K
 
     async def listen_for_commands():
-        nonlocal ws
+        global C, A, S, K
         async for message in ws:
-            if message == "reset":
-                agents[:] = generate_random_states(COUNT)
+            try:
+                data = json.loads(message)
+                if isinstance(data, dict) and data.get("type") == "sliders":
+                    values = data["values"]
+                    C = values.get("cohesion", C)
+                    A = values.get("alignment", A)
+                    S = values.get("separation", S)
+                    K = values.get("k", K)
+                elif message == "reset":
+                    agents[:] = generate_random_states(COUNT)
+            except json.JSONDecodeError:
+                if message == "reset":
+                    agents[:] = generate_random_states(COUNT)
+
 
     async def update_loop():
         while True:
@@ -57,8 +68,9 @@ def start_http_server():
 
 def main():
     threading.Thread(target=start_http_server, daemon=True).start()
-    webbrowser.open("http://localhost:8000/swarm.html")
+    # webbrowser.open("http://localhost:8000/swarm.html")
     asyncio.run(start_ws_server())
 
 if __name__ == "__main__":
     main()
+    

@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 
 function resizeCanvas() {
     const availableWidth = window.innerWidth;
-    const availableHeight = window.innerHeight - 100;
+    const availableHeight = window.innerHeight - 200;
     const size = Math.min(availableWidth, availableHeight);
 
     canvas.width = size;
@@ -14,18 +14,18 @@ function resizeCanvas() {
 }
 
 function drawBoid(ctx, x, y, theta) {
-    const heading = theta // -theta - Math.PI/2; // make 0 degrees up, convert to radians 
+    // const heading = theta // -theta - Math.PI/2; // make 0 degrees up, convert to radians 
     const size = 15
     const halfWidth = size / 2;
 
-    const tip_x = x + size * Math.cos(heading);
-    const tip_y = y + size * Math.sin(heading);
+    const tip_x = x + size * Math.cos(theta);
+    const tip_y = y + size * Math.sin(theta);
 
-    const left_x = x + halfWidth * Math.cos(heading + Math.PI * 0.75);
-    const left_y = y + halfWidth * Math.sin(heading + Math.PI * 0.75);
+    const left_x = x + halfWidth * Math.cos(theta + Math.PI * 0.75);
+    const left_y = y + halfWidth * Math.sin(theta + Math.PI * 0.75);
 
-    const right_x = x + halfWidth * Math.cos(heading - Math.PI * 0.75);
-    const right_y = y + halfWidth * Math.sin(heading - Math.PI * 0.75);
+    const right_x = x + halfWidth * Math.cos(theta - Math.PI * 0.75);
+    const right_y = y + halfWidth * Math.sin(theta - Math.PI * 0.75);
 
     ctx.beginPath();
     ctx.moveTo(tip_x, tip_y);
@@ -47,7 +47,6 @@ window.addEventListener('resize', resizeCanvas);
 const ws = new WebSocket(`ws://localhost:8765`);
 ws.onmessage = (event) => {
     const agents = JSON.parse(event.data);
-    console.log
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#777777";
     agents.forEach(a => {
@@ -55,9 +54,54 @@ ws.onmessage = (event) => {
     const y = a.y * canvas.height;
     drawBoid(ctx,x,y,a.theta)
     });
+    
 };
 
 const resetBtn = document.getElementById("reset-btn");
 resetBtn.addEventListener("click", () => {
-    ws.send("reset");  // Send reset command to server
+    console.log("HI")
+    ws.send("reset");
 });
+
+function sendSliderValues() {
+    const values = {
+        cohesion: parseFloat(cohesionSlider.value),
+        alignment: parseFloat(alignmentSlider.value),
+        separation: parseFloat(seperationSlider.value),
+        k: parseInt(kSlider.value),
+    };
+    ws.send(JSON.stringify({ type: "sliders", values }));
+}
+
+const kSlider = document.getElementById("k-slider");
+const kValue = document.getElementById("k-value");
+kValue.textContent = parseInt(kSlider.value);
+kSlider.oninput = function() {
+    kValue.textContent = this.value;
+    sendSliderValues();
+};
+
+const cohesionSlider = document.getElementById("cohesion-slider");
+const cohesionValue = document.getElementById("cohesion-value");
+cohesionValue.textContent = parseFloat(cohesionSlider.value).toFixed(2);
+cohesionSlider.oninput = function() {
+    cohesionValue.textContent = parseFloat(this.value).toFixed(2);
+    sendSliderValues();
+};
+
+const alignmentSlider = document.getElementById("alignment-slider");
+const alignmentValue = document.getElementById("alignment-value");
+alignmentValue.textContent = parseFloat(alignmentSlider.value).toFixed(2);
+alignmentSlider.oninput = function() {
+    alignmentValue.textContent = parseFloat(this.value).toFixed(2);
+    sendSliderValues();
+};
+
+const seperationSlider = document.getElementById("seperation-slider");
+const seperationValue = document.getElementById("seperation-value");
+seperationValue.textContent = parseFloat(seperationSlider.value).toFixed(2);
+seperationSlider.oninput = function() {
+    seperationValue.textContent = parseFloat(this.value).toFixed(2);
+    sendSliderValues();
+};
+
