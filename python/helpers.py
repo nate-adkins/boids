@@ -14,6 +14,7 @@ boid_type = np.dtype([
     ])
 
 class Boids():
+    
     def __init__(self, n: int, maxes: tuple[int], batch, speed_changes = False):
         self.speed_changes = speed_changes 
         self.count = n
@@ -58,9 +59,6 @@ class Boids():
         mean_x = np.mean(np.cos(self.boids_array['theta']))
         mean_y = np.mean(np.sin(self.boids_array['theta']))
         return atan2(mean_y, mean_x)
-
-
-
 
 class BoidShape():
 
