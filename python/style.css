@@ -1,0 +1,42 @@
+ html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #333;
+    overflow: hidden;
+    color: #FFF;
+    font-family: Arial;
+}
+#canvas-container {
+    background: #333;
+    display: flex;
+    justify-content: center;
+}
+
+#sim-canvas {
+    background-color: #FFF;
+    margin: 10px;
+}
+
+
+.params-group{
+    margin-top: 10px;
+    background-color: rgb(24, 24, 100);
+    width: 150px;
+    /* height: 100%; */
+    padding: 10px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.param{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+
+
+
+
