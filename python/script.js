@@ -15,7 +15,7 @@ function drawBoid(theta, x, y) {
     const scaledX = x * canvas.width;
     const scaledY = y * canvas.height;
 
-    const size = 0.009 * canvas.width
+    const size = 0.01 * canvas.width
     const halfWidth = size / 2;
 
     const tip_x = scaledX + size * Math.cos(theta);
