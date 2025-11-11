@@ -1,5 +1,7 @@
 # boids
 
+Boids (bird-oids) are a swarm of agents that follow a set of parametrized rules, simulating behavior observed in groups of organisms, including birds.
+
 The fundamental rules for boids are as follows:
 
 - **Separation** - turn away from surrounding local neighbors
