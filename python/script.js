@@ -11,6 +11,7 @@ const s_param = document.getElementById("s_param")
 const a_param = document.getElementById("a_param")
 const c_param = document.getElementById("c_param")
 const reset_btn = document.getElementById("reset-btn")
+
 function drawBoid(theta, x, y) {
     const scaledX = x * canvas.width;
     const scaledY = y * canvas.height;
@@ -41,6 +42,11 @@ function drawBoid(theta, x, y) {
 }
 
 ws.onmessage = (event) => {
+
+    // const curr_time = performance.now()
+    // console.log("delay: ", curr_time - prev_time)
+    // prev_time = curr_time
+
     const boids = JSON.parse(event.data);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     boids.forEach(([theta,x,y]) => drawBoid(theta,x,y));
@@ -57,27 +63,27 @@ function changeLayout() {
 
     canvas.style.width = `${size}px`;
     canvas.style.height = `${size}px`;
-    console.log('resizing canvas')
+    // console.log('resizing canvas')
 }
+window.addEventListener('resize', changeLayout);
+changeLayout();
 
 function sendParameters(){
     if (ws.readyState === WebSocket.OPEN){
-        let vals = [k_param.value,s_param.value,a_param.value,c_param.value,]
+        let vals = ["params",k_param.value,s_param.value,a_param.value,c_param.value,]
         ws.send(vals)
     }
 
 } 
 
-function sendReset() {
-    ws.send("reset");
-}
+function sendReset() { ws.send(["reset"]); }
 
 
-changeLayout();
-window.addEventListener('resize', changeLayout);
 
 s_param.oninput = function() { sendParameters();};
 a_param.oninput = function() { sendParameters();};
 c_param.oninput = function() { sendParameters();};
 k_param.oninput = function() { sendParameters();};
 reset_btn.onclick = function() { sendReset();};
+
+var prev_time = performance.now()

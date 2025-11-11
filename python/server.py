@@ -2,21 +2,21 @@ import asyncio
 from websockets.asyncio.server import serve
 from websockets.exceptions import ConnectionClosed
 from boids import BoidSwarm
-import webbrowser
-import json
+import webbrowser, json, time
 
 # parameter updates
 async def recieve_params(msg: str):
-    if msg == 'reset':
+    msg = msg.split(",")
+    print(msg)
+    if msg[0] == 'reset':
         swarm.randomize_states()
     else:
-        msg = msg.split(",")
-        if len(msg) == 4:
+        if msg[0] == 'params':
             try:
-                swarm.k = float(msg[0])
-                swarm.S = float(msg[1])
-                swarm.A = float(msg[2])
-                swarm.C = float(msg[3])
+                swarm.k = int(msg[1])
+                swarm.S = float(msg[2])
+                swarm.A = float(msg[3])
+                swarm.C = float(msg[4])
             except Exception as e:
                 swarm.S = 10
                 swarm.S = 0.0
@@ -30,9 +30,21 @@ async def recieve_params_handler(ws):
 
 # state updates
 async def update_state():
-    # await asyncio.sleep(0.001)
-    swarm.update()
+    
+
+    if time_it:
+        start_time = time.time()
+        swarm.update()
+        end_time = time.time()
+        if update_rate_hz:
+            while end_time - start_time < (1/update_rate_hz):
+                end_time = time.time()
+        print(f"{((end_time - start_time)*1000)}")
+        # print(f"n: {swarm.count}, k:{swarm.k}")
+    else: swarm.update()
+
     return json.dumps(swarm.boids.tolist())
+
 
 async def update_state_handler(ws):
     while True:
@@ -56,6 +68,10 @@ async def main():
 if __name__ == '__main__':    
     # webbrowser.open("index.html")
 
-    swarm = BoidSwarm(1000,50,0.005,0.1,0.1,0.1)
+    update_rate_hz = None
+    time_it = True
+    boids_test = 100_000
+    k_test = 1000
+    swarm = BoidSwarm(boids_test,k_test,0.005,0.1,0.1,0.1)
 
     asyncio.run(main())
