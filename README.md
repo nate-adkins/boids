@@ -10,7 +10,9 @@ The rule for boids are as follows:
 
 As you can see, the rules for boids are fairly straightforward, but can produce incredible emergent behavior:
 
-![](readme/example.gif)
+<p align="center">
+  <img src="/readme/example.gif" />
+</p>
 
 ## To Do
 * Show update rate
