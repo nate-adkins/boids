@@ -10,49 +10,49 @@
 #canvas-container {
     background: #333;
     display: flex;
+    flex-direction: row;
     justify-content: center;
+    margin: 10px;
+    gap: 10px;
+
 }
 
 #sim-canvas {
     background-color: #FFF;
-    margin: 10px;
 }
 
 
-.params-group{
-    margin-top: 10px;
+#params-group{
     background-color: rgb(24, 24, 100);
-    width: 150px;
-    /* height: 100%; */
-    padding: 10px;
-    margin-left: 10px;
-    margin-bottom: 10px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px;
 }
 
 .param{
     display: flex;
     flex-direction: row;
-    gap: 5px;
-    margin-bottom: 5px;
 }
 
 #reset-btn{
-    margin-bottom: 5px; 
-    height: 20px; 
-    width: 100%;
-    background-color: #333;
+    height: 30px; 
+    width: 100px;
+    background-color: rgb(200, 20, 20);
     border: none;
     color: #FFF;
-    
-}
-
-#reset-btn:active{
-    background-color: #555;
 }
 
 #reset-btn:hover{
     cursor: pointer;
 }
+
+
+#reset-btn:active{
+    background-color: rgb(150, 20, 20);
+}
+
 
 
 

@@ -11,7 +11,6 @@ const s_param = document.getElementById("s_param")
 const a_param = document.getElementById("a_param")
 const c_param = document.getElementById("c_param")
 const reset_btn = document.getElementById("reset-btn")
-
 function drawBoid(theta, x, y) {
     const scaledX = x * canvas.width;
     const scaledY = y * canvas.height;
@@ -47,7 +46,7 @@ ws.onmessage = (event) => {
     boids.forEach(([theta,x,y]) => drawBoid(theta,x,y));
 };
 
-function resizeCanvas() {
+function changeLayout() {
     const canvas = document.getElementById("sim-canvas");
     const availableWidth = window.innerWidth - controls_width - (3 * canvas_padding);
     const availableHeight = window.innerHeight - 2 * canvas_padding;
@@ -62,22 +61,23 @@ function resizeCanvas() {
 }
 
 function sendParameters(){
-    let vals = [k_param.value,s_param.value,a_param.value,c_param.value,]
-    ws.send(vals)
+    if (ws.readyState === WebSocket.OPEN){
+        let vals = [k_param.value,s_param.value,a_param.value,c_param.value,]
+        ws.send(vals)
+    }
+
 } 
 
-function sendReset(){
-    ws.send("reset")
+function sendReset() {
+    ws.send("reset");
 }
 
 
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+changeLayout();
+window.addEventListener('resize', changeLayout);
 
 s_param.oninput = function() { sendParameters();};
 a_param.oninput = function() { sendParameters();};
 c_param.oninput = function() { sendParameters();};
 k_param.oninput = function() { sendParameters();};
 reset_btn.onclick = function() { sendReset();};
-
-sendParameters();
