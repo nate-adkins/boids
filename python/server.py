@@ -66,12 +66,12 @@ async def main():
 
 
 if __name__ == '__main__':    
-    # webbrowser.open("index.html")
+    webbrowser.open("index.html")
 
     update_rate_hz = None
     time_it = True
-    boids_test = 100_000
-    k_test = 1000
+    boids_test = 2000
+    k_test = 50
     swarm = BoidSwarm(boids_test,k_test,0.005,0.1,0.1,0.1)
 
     asyncio.run(main())
