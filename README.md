@@ -2,7 +2,7 @@
 
 Boids is a set of parametrized behaviors in swarm robotics, simulating and producing behavior comparable to what is seen in flocks of birds.
 
-The rule for boids are as follows:
+The rules for boids are as follows:
 
 * Separation - turn away from the location of local neighbors
 * Alignment - turn towards the average heading of local neighbors
