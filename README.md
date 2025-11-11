@@ -1,14 +1,16 @@
 # boids
 
-Boids is a set of parametrized behaviors in swarm robotics, simulating and producing behavior comparable to what is seen in flocks of birds.
+The fundamental rules for boids are as follows:
 
-The rules for boids are as follows:
+- **Separation** - turn away from surrounding local neighbors
+- **Alignment** - turn towards the average heading of local neighbors
+- **Cohesion** - turn towards the average location of local neighbors
 
-* Separation - turn away from the location of local neighbors
-* Alignment - turn towards the average heading of local neighbors
-* Cohesion - turn towards the average location of local neighbors
+These fundamental rules are applied amongst local neighbors in the swarm, defined either by a distance threshold or by an agent's k-nearest neighbors. Weights are applied to each rule's effect, allowing for modulation of the strength of each individual rule. Each agent in the swarm follows the net effect of the rules.
 
-As you can see, the rules for boids are fairly straightforward, but can produce incredible emergent behavior:
+In this particular simulation, rules are applied using an agent's k-nearest neighbors and each rule produces a heading delta, weighted by the rule's parameter. The weighted heading deltas are then summed to produce the net heading delta. Each agent maintains constant linear speed in the simulation, changing only their heading.
+
+The rules for boids are simple, but produce incredible emergent behavior:
 
 <p align="center">
   <img src="/readme/example.gif" />
