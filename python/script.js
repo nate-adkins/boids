@@ -6,10 +6,11 @@ const controls_width = 150;
 const canvas = document.getElementById("sim-canvas");
 const ctx = canvas.getContext("2d");
 
+const k_param = document.getElementById("k_param")
 const s_param = document.getElementById("s_param")
 const a_param = document.getElementById("a_param")
 const c_param = document.getElementById("c_param")
-
+const reset_btn = document.getElementById("reset-btn")
 
 function drawBoid(theta, x, y) {
     const scaledX = x * canvas.width;
@@ -61,15 +62,22 @@ function resizeCanvas() {
 }
 
 function sendParameters(){
-    let vals = [s_param.value,a_param.value,c_param.value]
+    let vals = [k_param.value,s_param.value,a_param.value,c_param.value,]
     ws.send(vals)
-}   
+} 
+
+function sendReset(){
+    ws.send("reset")
+}
 
 
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
 s_param.oninput = function() { sendParameters();};
 a_param.oninput = function() { sendParameters();};
 c_param.oninput = function() { sendParameters();};
+k_param.oninput = function() { sendParameters();};
+reset_btn.onclick = function() { sendReset();};
 
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+sendParameters();

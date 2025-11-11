@@ -7,15 +7,22 @@ import json
 
 # parameter updates
 async def recieve_params(msg: str):
-    msg = msg.split(',')
-    try:
-        swarm.S = float(msg[0])
-        swarm.A = float(msg[1])
-        swarm.C = float(msg[2])
-    except Exception as e:
-        swarm.S = 0.0
-        swarm.A = 0.0
-        swarm.C = 0.0
+    if msg == 'reset':
+        swarm.randomize_states()
+    else:
+        msg = msg.split(",")
+        if len(msg) == 4:
+            try:
+                swarm.k = float(msg[0])
+                swarm.S = float(msg[1])
+                swarm.A = float(msg[2])
+                swarm.C = float(msg[3])
+            except Exception as e:
+                swarm.S = 10
+                swarm.S = 0.0
+                swarm.A = 0.0
+                swarm.C = 0.0
+
 
 async def recieve_params_handler(ws):
     async for message in ws:
@@ -47,8 +54,8 @@ async def main():
 
 
 if __name__ == '__main__':    
-    webbrowser.open("index.html")
+    # webbrowser.open("index.html")
 
-    swarm = BoidSwarm(3000,50,0.005,0.1,0.1,0.1)
+    swarm = BoidSwarm(1000,50,0.005,0.1,0.1,0.1)
 
     asyncio.run(main())

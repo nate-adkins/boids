@@ -39,6 +39,10 @@ class BoidSwarm:
     
     # @timeit
     def update(self):
+
+        if self.k <= 0 or self.k >= self.count:
+            print(f"k is invalid: {int(self.k)}")
+            return
         positions = np.column_stack((self.boids['x'], self.boids['y']))
         tree = cKDTree(positions)
         dists, neighbors = tree.query(positions, k=self.k + 1)
