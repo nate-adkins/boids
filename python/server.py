@@ -30,7 +30,7 @@ async def recieve_params_handler(ws):
 
 # state updates
 async def update_state():
-    await asyncio.sleep(0.001)
+    # await asyncio.sleep(0.001)
     swarm.update()
     return json.dumps(swarm.boids.tolist())
 
